@@ -16,3 +16,9 @@ fact(1) ->
   1;
 fact(X) ->
   X * fact(X-1).
+
+valid_time({Date = {Y, M, D}, Time = {H, Min, S}}) ->
+  io:format("Date tuple ~p represents ~p/~p/~p,~n", [Date, Y, M, D]),
+  io:format("Time tuple ~p represents ~p:~p:~p.~n", [Time, H, Min, S]);
+valid_time(_) ->
+  io:format("Invalid time!~n").

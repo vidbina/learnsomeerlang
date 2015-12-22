@@ -1,5 +1,5 @@
 -module(cases).
--export([insert/2, is_bigfoot/2, vehicle_by_cases/3, vehicle_by_cases_given_set/1, vehicle/2]).
+-export([insert/2, is_bigfoot/2, vehicle_by_cases/3, vehicle_by_cases_given_set/1, vehicle/2, fand/2]).
 
 insert(X,[]) ->
   [X];
@@ -50,3 +50,14 @@ vehicle(3, _) -> tripod;
 vehicle(4, none) -> cart;
 vehicle(_, electric) -> ev;
 vehicle(_, _) -> vehicle.
+
+% Ha, after playing around the chapter http://learnyousomeerlang.com/syntax-in-functions#which-to-use
+% discusses what I was asking myself when to use `case of` and when to use
+% function heads... not function clauses... function heads. I keep getting it
+% wrong.
+
+% This should throw an error if both of the two arguments aren't `true` or
+% `false`
+fand(false, _) -> false;
+fand(_, false) -> false;
+fand(true, true) -> true.

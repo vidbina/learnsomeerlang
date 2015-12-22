@@ -21,7 +21,7 @@ problem_child() ->
 evenness(N) ->
   if (N rem 2) =:= 0 ->
        even;
-     true ->
+     (N rem 2) =:= 1 ->
        uneven
   end.
 

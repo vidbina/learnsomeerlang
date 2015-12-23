@@ -36,4 +36,4 @@ tail_len([_|T], Acc) -> tail_len(T, 1+Acc).
 
 dup(X, N) -> dup(X, N, []).
 dup(_, 0, Acc) -> Acc;
-dup(X, N, Acc) -> dup(X, N-1, [X|Acc]).
+dup(X, N, Acc) when N > 0 -> dup(X, N-1, [X|Acc]).

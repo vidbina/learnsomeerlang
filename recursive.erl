@@ -1,5 +1,5 @@
 -module(recursive).
--export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2]).
+-export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2, rev/2]).
 
 % n! = n * (n-1) * ... * 1
 fac(N) when N == 0 -> 1;
@@ -37,3 +37,20 @@ tail_len([_|T], Acc) -> tail_len(T, 1+Acc).
 dup(X, N) -> dup(X, N, []).
 dup(_, 0, Acc) -> Acc;
 dup(X, N, Acc) when N > 0 -> dup(X, N-1, [X|Acc]).
+
+%rev(List) -> 
+rev([], Reversed) -> Reversed ++ [];
+%rev([Item], Reversed) -> Reversed ++ [Item];
+%rev([First,Second], Reversed) -> [Second, First] ++ Reversed;
+rev([Head|Tail], Reversed) -> rev(Tail, [Head] ++ Reversed).
+
+% [1,2,3,4], []
+% rev([1|[2,3,4]], []) -> rev([2,3,4], [1] ++ [])
+% rev([2|[3,4]], [1]) -> rev([3,4], [2] ++ [1])
+%
+% rev([3|4], [2,1]) -> rev([4], [3] ++ [3,2,1])
+% rev([3,4], [2,1]) -> [2,1] ++ [4,3]
+%rev([H|_], Acc) -> rev([], Acc ++ [H]);
+%rev([H], Reversed) -> rev([], Reversed ++ [H]);
+%rev([Head|Tail], Reversed) -> rev(T, Reversed ++ [H]).
+% rev([H|T]) -> rev(T) ++ [H]

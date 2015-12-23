@@ -1,5 +1,5 @@
 -module(recursive).
--export([fac/1, tail_fac/1, len/1, tail_len/1]).
+-export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2]).
 
 % n! = n * (n-1) * ... * 1
 fac(N) when N == 0 -> 1;
@@ -33,3 +33,7 @@ len([_|T]) -> 1+len(T).
 tail_len(L) -> tail_len(L, 1).
 tail_len([_], Acc) -> Acc;
 tail_len([_|T], Acc) -> tail_len(T, 1+Acc).
+
+dup(X, N) -> dup(X, N, []).
+dup(_, 0, Acc) -> Acc;
+dup(X, N, Acc) -> dup(X, N-1, [X|Acc]).

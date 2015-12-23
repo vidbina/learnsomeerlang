@@ -41,6 +41,15 @@ dup(X, N, Acc) when N > 0 -> dup(X, N-1, [X|Acc]).
 rev([], Reversed) -> Reversed;
 rev([Head|Tail], Reversed) -> rev(Tail, [Head|Reversed]).
 
+% wondering why @mononcqc went through the trouble of executing
+%   tail_sublist([H|T], N, SubList) when N > 0 ->
+%     tail_sublist(T, N-1, [H|SubList]).
+% and subsequently reversing the resulting list in order to maintain the order
+% instead of just appending the head to the right end of the list right away:
+%   tail_sublist([H|T], N, SubList) when N > 0 ->
+%     tail_sublist(T, N-1, SubList++[H]).
+% Is there a performance penalty in appending with `++` over adding a head with
+% `|`?
 sublist(_, 0, Sublist) -> Sublist;
 sublist([], _, Sublist) -> Sublist;
 sublist(List=[Head|Tail], N, Sublist) when N>0, N<length(List) ->

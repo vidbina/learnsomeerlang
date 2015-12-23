@@ -10,12 +10,13 @@ same(X,X) ->
 same(_,_) ->
   false.
 
-fact(0) ->
-  0;
-fact(1) ->
-  1;
-fact(X) ->
-  X * fact(X-1).
+fac(0) -> 1;
+fac(X) when X > 0 -> X * fac(X-1).
+
+% finally a proper implementation because fac(-1) gets stuck everlasting
+% recursion.
+guarded_fac(X) when X =:= 0 -> 1;
+guarded_fac(X) when X > 0 -> X*guarded_fac(X-1).
 
 valid_time({Date = {Y, M, D}, Time = {H, Min, S}}) ->
   io:format("Date tuple ~p represents ~p/~p/~p,~n", [Date, Y, M, D]),

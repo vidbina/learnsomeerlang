@@ -1,5 +1,5 @@
 -module(recursive).
--export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2, rev/2]).
+-export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2, rev/2, slist/2]).
 
 % n! = n * (n-1) * ... * 1
 fac(N) when N == 0 -> 1;
@@ -40,3 +40,8 @@ dup(X, N, Acc) when N > 0 -> dup(X, N-1, [X|Acc]).
 
 rev([], Reversed) -> Reversed;
 rev([Head|Tail], Reversed) -> rev(Tail, [Head|Reversed]).
+
+slist(_,0) -> [];
+slist([],_) -> [];
+slist(List=[Head|Tail], N) when N > 0, N < length(List) -> Tail;
+slist(List, N) when N =:= length(List) -> List.

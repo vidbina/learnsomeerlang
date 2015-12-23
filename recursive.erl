@@ -39,4 +39,4 @@ dup(_, 0, Acc) -> Acc;
 dup(X, N, Acc) when N > 0 -> dup(X, N-1, [X|Acc]).
 
 rev([], Reversed) -> Reversed;
-rev([Head|Tail], Reversed) -> rev(Tail, [Head] ++ Reversed).
+rev([Head|Tail], Reversed) -> rev(Tail, [Head|Reversed]).

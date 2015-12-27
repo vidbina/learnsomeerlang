@@ -1,5 +1,5 @@
 -module(recursive).
--export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2, rev/2, sublist/2]).
+-export([fac/1, tail_fac/1, len/1, tail_len/1, dup/2, rev/2, sublist/2, zip/2]).
 
 % n! = n * (n-1) * ... * 1
 fac(N) when N == 0 -> 1;
@@ -57,3 +57,10 @@ sublist([Head|Tail], N, Sublist) when N>0 ->
   lists:reverse(sublist(Tail, N-1, [Head|Sublist])).
 
 sublist(List, N) -> sublist(List, N, []).
+
+% throws error on lists with different lengths.
+zip([], [], ZippedList) -> ZippedList;
+zip([HeadA|TailA], [HeadB|TailB], ZippedList) ->
+  lists:reverse(zip(TailA, TailB, [{HeadA, HeadB}|ZippedList])).
+
+zip(ListA, ListB) -> zip(ListA, ListB, []).

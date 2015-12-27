@@ -50,10 +50,10 @@ rev([Head|Tail], Reversed) -> rev(Tail, [Head|Reversed]).
 %     tail_sublist(T, N-1, SubList++[H]).
 % Is there a performance penalty in appending with `++` over adding a head with
 % `|`?
+% Oh goodness there was... just read http://vid.bina.me/tools/pros-of-conses
 sublist(_, 0, Sublist) -> Sublist;
 sublist([], _, Sublist) -> Sublist;
-sublist(List=[Head|Tail], N, Sublist) when N>0, N<length(List) ->
-  sublist(Tail, N-1, Sublist++[Head]);
-sublist(List, N, _) when N =:= length(List) -> List. % save me the recursion
+sublist([Head|Tail], N, Sublist) when N>0 ->
+  lists:reverse(sublist(Tail, N-1, [Head|Sublist])).
 
 sublist(List, N) -> sublist(List, N, []).

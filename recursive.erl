@@ -20,7 +20,6 @@ tail_fac(0, Acc) -> Acc;
 tail_fac(N, Acc) when N > 0 -> tail_fac(N-1, N*Acc).
 
 len([]) -> 0;
-len([_]) -> 1;
 len([_|T]) -> 1+len(T).
 
 % tail recursion: keep ops in args rather than function body in order to
@@ -54,13 +53,13 @@ rev([Head|Tail], Reversed) -> rev(Tail, [Head|Reversed]).
 sublist(_, 0, Sublist) -> Sublist;
 sublist([], _, Sublist) -> Sublist;
 sublist([Head|Tail], N, Sublist) when N>0 ->
-  lists:reverse(sublist(Tail, N-1, [Head|Sublist])).
+  sublist(Tail, N-1, [Head|Sublist]).
 
-sublist(List, N) -> sublist(List, N, []).
+sublist(List, N) -> lists:reverse(sublist(List, N, [])).
 
 % throws error on lists with different lengths.
 zip([], [], ZippedList) -> ZippedList;
 zip([HeadA|TailA], [HeadB|TailB], ZippedList) ->
-  lists:reverse(zip(TailA, TailB, [{HeadA, HeadB}|ZippedList])).
+  zip(TailA, TailB, [{HeadA, HeadB}|ZippedList]).
 
-zip(ListA, ListB) -> zip(ListA, ListB, []).
+zip(ListA, ListB) -> lists:reverse(zip(ListA, ListB, [])).

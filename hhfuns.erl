@@ -21,3 +21,8 @@ map(F, [H|T]) -> [F(H)|map(F, T)].
 
 % example of directly calling an anon func
 % (fun(1) -> one; (2) -> two; (_) -> something end)(3).
+
+% (fun(Room) ->
+%   io:format("Alarm set in ~s.~n", [Room]),
+%   fun() -> io:format("Alarm tripped in ~s! Call Batman!~n", [Room]) end
+% end("office"))()

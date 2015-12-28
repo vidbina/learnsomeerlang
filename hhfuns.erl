@@ -35,3 +35,9 @@ even(L) -> lists:reverse(even(L, [])).
 even([], Acc) -> Acc;
 even([H|T], Acc) when H rem 2 == 0 -> even(T, [H|Acc]);
 even([_|T], Acc) -> even(T, Acc).
+
+old_men(L) -> lists:reverse(old_men(L, [])).
+
+old_men([], Acc) -> Acc;
+old_men([H|T], Acc) when H > 60 -> old_men(T, [H|Acc]);
+old_men([_|T], Acc) -> old_men(T, Acc).

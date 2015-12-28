@@ -58,3 +58,9 @@ filter([H|T], F, Acc) -> case F(H) of
                         true -> filter(T, F, [H|Acc]);
                         false -> filter(T, F, Acc)
                       end.
+
+max2(L) -> max2(L, undefined).
+max2([], Max) -> Max;
+max2([H|T], undefined) -> max2(T, H);
+max2([H|T], Max) when H > Max -> max2(T, H);
+max2([_|T], Max) -> max2(T, Max).

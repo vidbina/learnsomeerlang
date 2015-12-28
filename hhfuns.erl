@@ -26,3 +26,6 @@ map(F, [H|T]) -> [F(H)|map(F, T)].
 %   io:format("Alarm set in ~s.~n", [Room]),
 %   fun() -> io:format("Alarm tripped in ~s! Call Batman!~n", [Room]) end
 % end("office"))()
+
+% Named anon funcs :)
+% (fun Loop() -> timer:sleep(500), io:format("."), Loop() end)().

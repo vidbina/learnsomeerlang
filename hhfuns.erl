@@ -64,3 +64,7 @@ max2([], Max) -> Max;
 max2([H|T], undefined) -> max2(T, H);
 max2([H|T], Max) when H > Max -> max2(T, H);
 max2([_|T], Max) -> max2(T, Max).
+
+sum(L) -> sum(L, 0).
+sum([], Total) -> Total;
+sum([H|T], Total) -> sum(T, Total+H).

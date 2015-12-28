@@ -41,3 +41,20 @@ old_men(L) -> lists:reverse(old_men(L, [])).
 old_men([], Acc) -> Acc;
 old_men([H|T], Acc) when H > 60 -> old_men(T, [H|Acc]);
 old_men([_|T], Acc) -> old_men(T, Acc).
+
+filter(L, F) -> lists:reverse(filter(L, F, [])).
+
+filter([], _, Acc) -> Acc;
+% not using when doesn't work out here because when F(X) == something cannot be
+% evaluated in a guard as specified in
+% http://erlang.org/doc/reference_manual/expressions.html#id83710
+% http://stackoverflow.com/questions/2241340/unable-to-use-function-call-in-function-guard
+% Probably having something to do with determining the branches and non-reachable
+% branches at compile-time. From my observations it appears that all guards can
+% be determined at compile time. With a function in the guard, we open up the
+% world to a mess of options and problems. The case evaluates during run-time,
+% which means that on a guard level we've already entered the function branch.
+filter([H|T], F, Acc) -> case F(H) of
+                        true -> filter(T, F, [H|Acc]);
+                        false -> filter(T, F, Acc)
+                      end.

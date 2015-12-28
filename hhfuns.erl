@@ -29,3 +29,9 @@ map(F, [H|T]) -> [F(H)|map(F, T)].
 
 % Named anon funcs :)
 % (fun Loop() -> timer:sleep(500), io:format("."), Loop() end)().
+
+even(L) -> lists:reverse(even(L, [])).
+
+even([], Acc) -> Acc;
+even([H|T], Acc) when H rem 2 == 0 -> even(T, [H|Acc]);
+even([_|T], Acc) -> even(T, Acc).

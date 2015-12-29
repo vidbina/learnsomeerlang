@@ -73,3 +73,5 @@ fold(_, Start, []) -> Start;
 fold(F, Start, [H|T]) -> fold(F, F(H, Start), T).
 
 reverse(L) -> fold(fun(Value, Acc) -> [Value|Acc] end, [], L).
+max3(L=[H|_]) -> fold(fun(Value, Acc) when Value > Acc -> Value; (_, Acc) -> Acc end, H, L). 
+largerthan(Threshold, List) -> fold(fun(V, Acc) when V>Threshold -> [V|Acc]; (_, Acc) -> Acc end, [], List).

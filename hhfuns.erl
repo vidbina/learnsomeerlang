@@ -68,3 +68,8 @@ max2([_|T], Max) -> max2(T, Max).
 sum(L) -> sum(L, 0).
 sum([], Total) -> Total;
 sum([H|T], Total) -> sum(T, Total+H).
+
+fold(_, Start, []) -> Start;
+fold(F, Start, [H|T]) -> fold(F, F(H, Start), T).
+
+reverse(L) -> fold(fun(Value, Acc) -> [Value|Acc] end, [], L).

@@ -63,4 +63,4 @@ lookup(LookupKey, { node, { _, _, _, Larger }} ) ->
 
 has_value(_, { node, 'nil' }) -> false;
 has_value(Val, { node, { _, Val, _, _ } }) -> true;
-has_value(Val, { node, { _, _, L, R}}) -> has_value(Val, L) or has_value(Val, R).
+has_value(Val, { node, { _, _, L, R}}) -> has_value(Val, L) orelse has_value(Val, R).

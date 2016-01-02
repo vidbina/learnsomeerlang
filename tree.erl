@@ -1,5 +1,5 @@
 -module(tree).
--export([empty/0, insert/3, lookup/2, demo/0]).
+-export([empty/0, insert/3, lookup/2, demo/0, has_value/2]).
 
 empty() -> { node, 'nil' }.
 
@@ -60,3 +60,7 @@ lookup(LookupKey, { node, { Key, _, Smaller, _ }} ) when LookupKey < Key ->
 	lookup(LookupKey, Smaller);
 lookup(LookupKey, { node, { _, _, _, Larger }} ) ->
 	lookup(LookupKey, Larger).
+
+has_value(_, { node, 'nil' }) -> false;
+has_value(Val, { node, { _, Val, _, _ } }) -> true;
+has_value(Val, { node, { _, _, L, R}}) -> has_value(Val, L) or has_value(Val, R).

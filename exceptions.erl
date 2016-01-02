@@ -22,6 +22,7 @@ catcher(X, Y) ->
 
 handle(F) ->
   try F() of
+    42 -> answered;
     _ -> ok
   catch
     error:badarith -> { error, caught, 'suck at math' };

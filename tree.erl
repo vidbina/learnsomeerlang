@@ -64,6 +64,8 @@ lookup(LookupKey, { node, { _, _, _, Larger }} ) ->
 % problem with this implementation is that every time a true is found the
 % caller will evaluate and relay the value up the call stack. It slowly
 % propagates upward. Throwing a value will simplify this process.
+% TODO: understand better why try X of is protected and how this causes
+% problems w/ Last Call Optimization in Tail Recursive calls
 has_val(Val, Tree) -> try has_value(Val, Tree) of
                         false -> false
                       catch

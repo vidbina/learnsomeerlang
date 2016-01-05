@@ -1,5 +1,5 @@
 -module(tree).
--export([empty/0, insert/3, lookup/2, demo/0, has_value/2]).
+-export([empty/0, insert/3, lookup/2, demo/0, has_value/2, has_val/2]).
 
 empty() -> { node, 'nil' }.
 
@@ -64,6 +64,14 @@ lookup(LookupKey, { node, { _, _, _, Larger }} ) ->
 % problem with this implementation is that every time a true is found the
 % caller will evaluate and relay the value up the call stack. It slowly
 % propagates upward. Throwing a value will simplify this process.
+has_val(Val, Tree) -> try has_value(Val, Tree) of
+                        false -> false
+                      catch
+                        found -> true
+                      end.
 has_value(_, { node, 'nil' }) -> io:format("nil~n"), false;
-has_value(Val, { node, { _, Val, _, _ } }) -> io:format("found ~p~n", [Val]), true;
-has_value(Val, { node, { _, _, L, R}}) -> io:format("check~n  -~p or~n  -~p~n", [L, R]), has_value(Val, L) orelse has_value(Val, R).
+has_value(Val, { node, { _, Val, _, _ } }) -> io:format("found ~p~n", [Val]), throw(found);
+has_value(Val, { node, { _, _, L, R}}) -> 
+  io:format("check~n  -~p or~n  -~p~n", [L, R]),
+  has_value(Val, L), has_value(Val, R).
+%has_value(Val, L) orelse has_value(Val, R).

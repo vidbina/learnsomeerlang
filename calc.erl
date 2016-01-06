@@ -3,6 +3,12 @@
 
 calc(Expr) -> calc(string:tokens(Expr, " "), []).
 
+% calc(["1", "3", "+", "2", "/"], [])
+% calc(["3", "+", "2", "/"], [1])
+% calc(["+", "2", "/"], [3, 1])
+% calc(["2", "/"], [4])
+% calc(["/"], [2, 4])
+% calc([], [2])
 calc([], [Val|_]) -> Val;
 calc(["+"|Tokens], [L|[R|Stack]]) ->
   calc(Tokens, [L+R|Stack]);

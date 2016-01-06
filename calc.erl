@@ -39,6 +39,8 @@ rpn("sqrt", [Operand|Rest]) -> [math:sqrt(Operand)|Rest];
 rpn("^", [Exponent|[Base|Rest]]) -> [math:pow(Base, Exponent)|Rest];
 rpn("e", Rest) -> [math:exp(1)|Rest];
 rpn("pi", Rest) -> [math:pi()|Rest];
+rpn("sum", L) -> [lists:sum(L)];
+rpn("prod", L) -> [lists:foldl(fun (X, Acc) -> Acc*X end, 1, L)];
 rpn(Operand, Acc) -> [read(Operand)|Acc].
 
 rpn_test() ->
@@ -57,9 +59,9 @@ rpn_test() ->
   true = math:sqrt(10) == rpn("10 sqrt"),
   true = math:log(2.7) == rpn("2.7 ln"),
   true = math:log10(2.7) == rpn("2.7 log10"),
-%  50 = rpn("10 10 10 10 sum"),
-%  10.0 = rpn("10 10 10 20 sum 5 /"),
-%  1000.0 = rpn("10 10 20 0.5 prod"),
+  50 = rpn("10 10 10 20 sum"),
+  10.0 = rpn("10 10 10 20 sum 5 /"),
+  1000.0 = rpn("10 10 20 0.5 prod"),
   ok.
 
 list_to_number(N) ->

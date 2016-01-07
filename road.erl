@@ -1,9 +1,12 @@
 -module(road).
 -compile(export_all).
 
-route(Filename) ->
+load_map(Filename) ->
 	{ ok, Bin } = file:read_file(Filename),
 	tupelize(splitn(3, [list_to_integer(E) || E <- string:tokens(binary_to_list(Bin), "\n")])).
+
+route(Filename) ->
+	shortroute(load_map(Filename)).
 
 split(L) -> split([], L).
 split([{A}|Acc], [H|L]) -> split([{A, H}|Acc], L);
@@ -26,18 +29,27 @@ tupelize([H|Rest], Acc) ->
 	tupelize(Rest, [list_to_tuple(H)|Acc]);
 tupelize([], Acc) -> Acc.
 
-route({A, B}, Acc) ->
-  case A > B of
-    true -> [{A}|Acc];
-    false -> [{B}|Acc]
-  end;
-route({A, _, _}, Acc) -> [{A}|Acc].
+shortroute(Map) ->
+	lists:foldl(fun shortest_step/2, {{0, []}, {0, []}}, Map).
 
+% cheated by copy-pasting this one
+shortest_step({A,B,X}, {{DistA,PathA}, {DistB,PathB}}) ->
+  OptA1 = {DistA + A, [{a,A}|PathA]},
+  OptA2 = {DistB + B + X, [{x,X}, {b,B}|PathB]},
+  OptB1 = {DistB + B, [{b,B}|PathB]},
+  OptB2 = {DistA + A + X, [{x,X}, {a,A}|PathA]},
+  {erlang:min(OptA1, OptA2), erlang:min(OptB1, OptB2)}.
 % ----x----x----x----x----x
 %     |    |    |    |    
 %     |    |    |    |    
 %     |    |    |    |    
 % ----x----x----x----x----x
+
+% -90-x--5-x-40-x-10-x----x
+%     |    |    |    |    
+%    10   90    2    8    
+%     |    |    |    |    
+% -30-x-20-x-25-x--0-x----x
 
 % -50-x--5-x-40-x-10-x----x
 %     |    |    |    |    

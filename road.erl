@@ -30,7 +30,9 @@ tupelize([H|Rest], Acc) ->
 tupelize([], Acc) -> Acc.
 
 shortroute(Map) ->
-	lists:foldl(fun shortest_step/2, {{0, []}, {0, []}}, Map).
+	{A,B} = lists:foldl(fun shortest_step/2, {{0, []}, {0, []}}, Map),
+	{_, Path } = erlang:min(A, B),
+	lists:reverse(Path).
 
 % cheated by copy-pasting this one
 shortest_step({A,B,X}, {{DistA,PathA}, {DistB,PathB}}) ->

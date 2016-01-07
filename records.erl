@@ -19,12 +19,12 @@ harold() -> #character{
                series=poi(),
                details=["smart", "careful", "quirky", "geeky", "intelligent", "god complex"]
               }.
-root() -> #character{
-             name="Samantha Groves",
-             gender=female,
-             series=poi(),
-             details=["smart", "intelligent", "geeky", "hacker", "annoying", "gorgeous"]
-            }.
+% terrible idea, but I just wanted to experiment.
+root() -> (harold())#character{
+                     name="Samantha Groves",
+                     gender=female,
+                     details=["smart", "intelligent", "geeky", "hacker", "annoying", "gorgeous"]
+                    }.
 reese() -> #character{
               name="John Reese",
               gender=male,

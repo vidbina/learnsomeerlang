@@ -1,6 +1,10 @@
 -module(road).
 -compile(export_all).
 
+main([Filename]) ->
+	io:format("optimal path is ~p", [route(Filename)]),
+	erlang:halt().
+
 load_map(Filename) ->
 	{ ok, Bin } = file:read_file(Filename),
 	tupelize(splitn(3, [list_to_integer(E) || E <- string:tokens(binary_to_list(Bin), "\n")])).

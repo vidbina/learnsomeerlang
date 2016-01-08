@@ -1,0 +1,1 @@
+-record(included, {some_field, some_default="yeah!", blahblah}).

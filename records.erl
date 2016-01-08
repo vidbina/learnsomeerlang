@@ -1,6 +1,8 @@
 -module(records).
 -compile(export_all).
 
+-include("records.hrl").
+
 -record(robot, {name, type, hobbies, details=[]}).
 -record(character, {name, gender=unknown, series, details=[]}).
 -record(show, {name,topics=[]}).

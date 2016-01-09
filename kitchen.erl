@@ -19,7 +19,7 @@ fridge(Content) ->
       From ! { self(), ok },
       fridge([Food|Content]);
     { From, { take, Food } } ->
-      case lists:any(fun(X) -> Food==X end, Content) of
+      case lists:member(Food, Content) of
         true -> From ! { self(), ok }, fridge(lists:delete(Food, Content));
         false -> From ! { self(), out }, fridge(Content)
       end;

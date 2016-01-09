@@ -26,10 +26,15 @@ store(Pid, Item) ->
   receive
     { _, Msg } -> Msg
   end.
+% just tried freezing it and the nice thing is that one can start another
+% process (e.g: start a local shell) and send a message to the calling pid using
+% pid(X,Y,Z) ! { msg, blahblah } in order to evoke a response if there is no
+% after clause :)
 take(Pid, Item) ->
   Pid ! { self(), { take, Item } },
   receive
     { _, Msg } -> Msg
+  after 2000 -> too_slow
   end.
 view(Pid) ->
   Pid ! { self(), { view } },

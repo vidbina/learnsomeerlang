@@ -1,52 +1,53 @@
 -module(cafe).
--export([start/0, say/2, saymore/2, listen/0, cafe/0]).
+-export([start/0, say/2, saymore/2, sayandlisten/2, sayandlisten/3, listen/0, cafe/0, routine/1,listentoresponse/1]).
 
 cafe() ->
   receive
     { Pid, hello } ->
-      timer:sleep(3000),
-      Pid ! { self(), hey },
+      spawn(fun() -> timer:sleep(3000), Pid ! { self(), hey } end),
       cafe();
     { Pid, marco } ->
-      timer:sleep(1000),
-      Pid ! { self(), polo },
+      spawn(fun() -> timer:sleep(1000), Pid ! { self(), polo } end),
       cafe();
     { Pid, polo } ->
-      timer:sleep(1000),
-      Pid ! { self(), marco },
+      spawn(fun() -> timer:sleep(1000), Pid ! { self(), marco } end),
       cafe();
     { Pid, bye } -> 
-      timer:sleep(1000),
-      Pid ! { self(), adios };
+      spawn(fun() -> timer:sleep(1000), Pid ! { self(), adios } end);
     { Pid, Something } ->
-      timer:sleep(2000),
-      io:format("~p~n", [Something]),
-      Pid ! { self(), Something },
+      spawn(fun() ->
+                timer:sleep(2000),
+                io:format("~p~n", [Something]),
+                Pid ! { self(), Something }
+            end),
       cafe();
     { Pid, Something, Delay } ->
-      timer:sleep(Delay),
-      io:format("~p in ~pms~n", [Something, Delay]),
-      Pid ! { self(), Something },
+      spawn(fun() -> timer:sleep(Delay),
+                     io:format("~p in ~pms~n", [Something, Delay]),
+                     Pid ! { self(), Something }
+            end),
       cafe()
   end.
   
 start() -> spawn(?MODULE, cafe, []).
 % receiving a message after sending something just picks up the earliest
 % message on the stack which may not be the message I'm looking for. 
-say(Pid, Something) ->
-  Pid ! { self(), Something },
+listentoresponse(Something) ->
   receive
     { _, Msg } ->
       io:format("~p => ~p~n", [Something, Msg]),
       Msg
   end.
+sayandlisten(Pid, Something) ->
+  say(Pid, Something),
+  listentoresponse(Something).
+sayandlisten(Pid, Something, Delay) ->
+  say(Pid, Something, Delay),
+  listentoresponse(Something).
+say(Pid, Something) ->
+  Pid ! { self(), Something }.
 say(Pid, Something, Delay) ->
-  Pid ! { self(), Something, Delay },
-  receive
-    { _, Msg } ->
-      io:format("~p => ~p (~pms)~n", [Something, Msg, Delay]),
-      Msg
-  end.
+  Pid ! { self(), Something, Delay }.
 saymore(Pid, Things) ->
   lists:map(fun(Something) ->
                 case Something of
@@ -59,3 +60,6 @@ listen() ->
   receive
     { _, Msg } -> io:format("got ~p~n", [Msg])
   end.
+
+routine(Pid) ->
+  cafe:saymore(Pid,[this,is,weird,dont,you,think,{defalt,3000},{works,10000},{for,5000},blume,right,now]).

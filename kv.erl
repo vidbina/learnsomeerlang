@@ -46,3 +46,9 @@ proper_list() -> [
 % in order to have the keys represented in alphabetic order in order to work.
 orddict_mindfuck() -> [{alpha, 1}, {foxtrot, 2}, {bravo, 3}, {charlie, 4}, {golf, 5}, {delta, 6}, {hotel, 7}].
 
+num_keys() -> [{1, one}, {2, two}, {3.0, three}, {4, four}].
+% erlang.org/doc/man/dict.html specifies that dict considers keys different
+% if they do not match =:=, while orddict only considers them different if they
+% do not compare ==. Since 3 and 3.0 compare ==, the keys are orddict-equal ;).
+% orddict:fetch(3, orddict:from_list(num_keys())). returns three
+% dict:fetch(3, dict:from_list(num_keys())). throws an error

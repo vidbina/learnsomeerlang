@@ -1,5 +1,5 @@
--module(msg).
--export([start/0, say/2, saymore/2, cafe/0]).
+-module(cafe).
+-export([start/0, say/2, saymore/2, listen/0, cafe/0]).
 
 cafe() ->
   receive
@@ -34,7 +34,9 @@ say(Pid, Something) ->
       Msg
   end.
 saymore(Pid, Things) ->
-  lists:map(fun(Something) -> Pid ! { self(), Something } end, Things),
+  lists:map(fun(Something) -> Pid ! { self(), Something } end, Things).
+
+listen() ->
   receive
     { _, Msg } -> io:format("got ~p~n", [Msg])
   end.

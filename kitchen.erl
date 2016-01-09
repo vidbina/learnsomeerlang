@@ -1,18 +1,8 @@
 -module(kitchen).
--compile(export_all).
+%-compile(export_all).
+-export([start/1, store/2, take/2, view/1, fridge/1]).
 
-fridge1() ->
-  receive
-    { From, { store, _Food } } ->
-      From ! { self(), ok },
-      fridge1();
-    { From, { take, _Food } } ->
-      From ! { self(), ok },
-      fridge1();
-    terminate -> ok
-  end.
-
-fridge() -> fridge([]).
+%fridge() -> fridge([]).
 fridge(Content) ->
   receive
     { From, { store, Food } } ->
@@ -28,3 +18,8 @@ fridge(Content) ->
       fridge(Content);
     terminate -> ok
   end.
+
+start(Contents) -> spawn(?MODULE, fridge, [Contents]).
+store(Pid, Item) -> Pid ! { self(), { store, Item } }.
+take(Pid, Item) -> Pid ! { self(), { take, Item } }.
+view(Pid) -> Pid ! { self(), { view } }.

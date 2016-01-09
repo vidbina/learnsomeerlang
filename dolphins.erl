@@ -3,7 +3,7 @@
 
 dolphin1() ->
   receive
-    do_a_flip -> flipping;
-    fish -> thanks;
-    _ -> sonar
+    do_a_flip -> io:format("nope~n");
+    fish -> io:format("thank you, buddy~n");
+    _ -> io:format("doing the sonar thing~n")
   end.

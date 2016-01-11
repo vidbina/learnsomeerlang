@@ -1,5 +1,5 @@
 -module(event).
--export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, normalize/2]).
+-export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, cancel/1, normalize/2]).
 -record(state, { server, name="", to_go=0 }).
 
 % time in milliseconds
@@ -14,6 +14,18 @@ start_link(Server, Name, Time, Period) ->
   Pid = spawn_link(?MODULE, init, [Server, Name, Time, Period]),
   io:format("Registering ~p on ~p", [Pid, self()]),
   register(Name, Pid).
+
+cancel(Event) ->
+  Pid = case is_pid(Event) of
+    true -> Event;
+    false -> whereis(Event)
+  end,
+  Ref = erlang:monitor(process, Pid),
+  Pid ! { self(), Ref, cancel },
+  receive
+    { Ref, ok } -> erlang:demonitor(Ref, [flush]), ok;
+    { 'DOWN', Ref, process, Pid, _Reason } -> ok
+  end.
 
 init(Server, Name, Time, Period) ->
   loop(#state{ server=Server, name=Name, to_go=normalize(Time, Period)}).

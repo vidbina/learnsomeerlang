@@ -4,7 +4,9 @@
 -record(event, { name="", description="", pid, timeout=calendar:local_time()}).
 
 start() -> start(?MODULE).
-start(Name) -> register(Name, spawn(?MODULE, init, [])).
+start(Name) -> register(Name, Pid=spawn(?MODULE, init, [])), Pid.
+start_link() -> start_link(?MODULE).
+start_link(Name) -> register(Name, Pid=spawn_link(?MODULE, init, [])), Pid.
 
 terminate() -> terminate(?MODULE).
 terminate(Name) -> whereis(Name) ! shutdown.

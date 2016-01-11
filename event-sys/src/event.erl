@@ -1,19 +1,23 @@
 -module(event).
--export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, cancel/1, normalize/2, time_to_go/1]).
+-export([loop/1, init/4, start_link/2, start_link/3, start_link/4, start/2, start/3, start/4, cancel/1, normalize/2, time_to_go/1]).
 -record(state, { server, name="", to_go=0 }).
 
 % time in milliseconds
+start(Name, Time) -> start(self(), Name, Time).
 start(Server, Name, Time) -> start(Server, Name, Time, 1000).
 start(Server, Name, Time, Period) -> 
   Pid = spawn(?MODULE, init, [Server, Name, Time, Period]),
   io:format("Registering ~p on ~p", [Pid, self()]),
-  register(Name, Pid).
+  %register(Name, Pid),
+  Pid.
 
+start_link(Name, Time) -> start(self(), Name, Time).
 start_link(Server, Name, Time) -> start_link(Server, Name, Time, 1000).
 start_link(Server, Name, Time, Period) -> 
   Pid = spawn_link(?MODULE, init, [Server, Name, Time, Period]),
   io:format("Registering ~p on ~p", [Pid, self()]),
-  register(Name, Pid).
+  %register(Name, Pid),
+  Pid.
 
 cancel(Event) ->
   Pid = case is_pid(Event) of

@@ -3,7 +3,7 @@
 
 call(Pid, Msg) ->
   Ref = erlang:monitor(process, Pid),
-  Pid ! { self(), Ref, Msg },
+  Pid ! {sync, self(), Ref, Msg},
   receive
     { Ref, Response } ->
       erlang:demonitor(Ref, [flush]),
@@ -15,10 +15,14 @@ call(Pid, Msg) ->
   end.
 
 cast(Pid, Msg) ->
-  Pid ! Msg,
+  Pid ! {async, Msg},
   ok.
+
+reply({Pid, Ref}, Msg) ->
+  Pid ! { Ref, Msg }.
 
 loop(Module, State) ->
   receive
-    Message -> Module:handle(Message, State)
+    {async, Msg} -> loop(Module, Module:handle(async, Msg, State));
+    {sync, Pid, Ref, Msg} -> loop(Module, Module:handle(sync, {Pid, Ref, Msg}, State))
   end.

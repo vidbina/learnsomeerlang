@@ -3,11 +3,55 @@
 -record(state, { events, clients }).
 -record(event, { name="", description="", pid, timeout=calendar:local_time()}).
 
-start(Name) ->
-  register(Name, spawn(?MODULE, init, [])).
+start() -> start(?MODULE).
+start(Name) -> register(Name, spawn(?MODULE, init, [])).
 
-init() ->
-  loop(#state{events=orddict:new(), clients=orddict:new() }).
+terminate() -> terminate(?MODULE).
+terminate(Name) -> whereis(Name) ! shutdown.
+
+init() -> loop(#state{events=orddict:new(), clients=orddict:new() }).
+
+experiment() -> io:format("?MODULE is ~p~n", [?MODULE]).
+
+% monitor the process because we want the client to be subscribed to an
+% instance. If the instance dies the subscription cancels and may be restarted
+% again by the party who requested the subscription. No assumption is made.
+subscribe(Pid) ->
+  Ref = erlang:monitor(process, whereis(?MODULE)),
+  ?MODULE ! { self(), Ref, { subscribe, Pid } },
+  receive
+    { Ref, ok } -> { ok, Ref };
+    { 'DOWN', Ref, process, _Pid, Reason } -> { error, Reason }
+  after 5000 ->
+          { error, timeout }
+  end.
+% add_event does not subscribe to process because it doesn't care about the
+% process. If the process is restarted while this function is executed it will
+% communicate with the latest registered process in order to handle the
+% request.
+add_event(Name, Description, TimeOut) ->
+  Ref = make_ref(),
+  ?MODULE ! { self(), Ref, { add, Name, Description, TimeOut } },
+  receive
+    { Ref, Msg } -> Msg
+  after 5000 ->
+          { error, timeout }
+  end.
+cancel_event(Name) ->
+  Ref = make_ref(),
+  ?MODULE ! { self(), Ref, { cancel, Name } },
+  receive
+    { Ref, ok } -> ok
+  after 5000 ->
+          { error, timeout }
+  end.
+
+listen(Delay) ->
+  receive
+    M = { done, _Name, _Description } ->
+      [M | listen(0)]
+  after Delay*1000 -> []
+  end.
 
 loop(State=#state{}) ->
   receive

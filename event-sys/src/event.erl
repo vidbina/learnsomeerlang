@@ -1,17 +1,22 @@
 -module(event).
--export([loop/1, start/3, start/4, normalize/2]).
+-export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, normalize/2]).
 -record(state, { server, name="", to_go=0 }).
 
 % time in milliseconds
 start(Server, Name, Time) -> start(Server, Name, Time, 1000).
 start(Server, Name, Time, Period) -> 
-  Pid = spawn(fun() -> loop(#state{
-                          server=Server,
-                          name=Name,
-                          to_go=normalize(Time, Period)}
-                      ) end),
+  Pid = spawn(?MODULE, init, [Server, Name, Time, Period]),
   io:format("Registering ~p on ~p", [Pid, self()]),
   register(Name, Pid).
+
+start_link(Server, Name, Time) -> start_link(Server, Name, Time, 1000).
+start_link(Server, Name, Time, Period) -> 
+  Pid = spawn_link(?MODULE, init, [Server, Name, Time, Period]),
+  io:format("Registering ~p on ~p", [Pid, self()]),
+  register(Name, Pid).
+
+init(Server, Name, Time, Period) ->
+  loop(#state{ server=Server, name=Name, to_go=normalize(Time, Period)}).
 
 loop(State = #state{server=Server, to_go=[T|Next]}) ->
   receive

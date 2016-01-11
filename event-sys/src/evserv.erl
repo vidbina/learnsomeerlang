@@ -55,7 +55,7 @@ loop(State=#state{}) ->
     shutdown -> exit(shutdown);
     { 'DOWN', Ref, process, _Pid, _Reason } ->
       loop(State#state{clients=orddict:erase(Ref, State#state.clients)});
-    code_change -> io:format("code changed~n"), ?MODULE:loop(State);
+    code_change -> ?MODULE:loop(State);
     Unknown -> io:format("Unknown msg ~p~n", [Unknown]),
                loop(State)
   end.

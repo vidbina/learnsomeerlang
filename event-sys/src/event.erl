@@ -1,5 +1,5 @@
 -module(event).
--export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, cancel/1, normalize/2]).
+-export([loop/1, init/4, start_link/3, start_link/4, start/3, start/4, cancel/1, normalize/2, time_to_go/1]).
 -record(state, { server, name="", to_go=0 }).
 
 % time in milliseconds
@@ -27,8 +27,11 @@ cancel(Event) ->
     { 'DOWN', Ref, process, Pid, _Reason } -> ok
   end.
 
+init(Server, Name, {Day, Time}, _) ->
+  loop(#state{ server=Server, name=Name, to_go=time_to_go({Day, Time})});
 init(Server, Name, Time, Period) ->
   loop(#state{ server=Server, name=Name, to_go=normalize(Time, Period)}).
+
 
 loop(State = #state{server=Server, to_go=[T|Next]}) ->
   receive
@@ -47,3 +50,11 @@ loop(State = #state{server=Server, to_go=[T|Next]}) ->
 
 normalize(Duration, Limit) ->
   [Duration rem Limit|lists:duplicate(Duration div Limit, Limit)].
+
+time_to_go(Timeout={{_,_,_}, {_,_,_}}) ->
+  Remaining = calendar:datetime_to_gregorian_seconds(Timeout)-calendar:datetime_to_gregorian_seconds(calendar:local_time()),
+  Seconds = if Remaining > 0 -> Remaining;
+               Remaining =< 0 -> 0
+            end,
+  io:format("remaining ~p, seconds are ~p~n", [Remaining, Seconds]),
+  normalize(Seconds*1000, 24*60*60*1000).

@@ -18,7 +18,7 @@ order_cat(Pid, Name, Color, Description) ->
       erlang:error(Reason)
   after 5000 ->
           erlang:error(timeout)
-end.
+  end.
  
 %% This call is asynchronous
 return_cat(Pid, Cat = #cat{}) ->

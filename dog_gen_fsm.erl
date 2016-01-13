@@ -18,7 +18,7 @@ init(StartState) ->
   io:format("start sitting~n"),
   {ok, sitting, StartState}.
 
-handle_event(food_smell, State, History) ->
+handle_event(food_smell, _AnyState, History) ->
   io:format("I smell food, where is it?~n"),
   {next_state, searching, [searching|History]}.
 

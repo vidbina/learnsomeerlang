@@ -13,10 +13,13 @@ code_change(OldVsn, State, Extra) ->
   {ok, State}.
 handle_call(Request, From, State) ->
   io:format("~p asked ~p in ~p~n", [From, Request, State]),
-  {reply, something, State}.
+  {reply, 42, State}.
 handle_cast(Request, State) ->
   io:format("~p cast in ~p~n", [Request, State]),
-  {noreply, State}.
+  case Request of
+    die -> {stop, dealing_with_asshole};
+    _ ->{noreply, State}
+  end.
 handle_info(Info, State) ->
   io:format("info: ~p~n", [Info]),
   {noreply, State}.

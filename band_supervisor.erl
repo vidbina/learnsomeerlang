@@ -17,6 +17,21 @@ start_link(Type) ->
 % Shutdown = number() | infinity.
 % Type = worker | supervisor.
 % Modules = [Module].
+
+%init(jamband) ->
+%  {ok, {{simple_one_for_one, 3, 60},
+%        [{jam_musician,
+%          {musicians, start_link, []},
+%          temporary,
+%          1000,
+%          worker,
+%          [musicians]}] }};
+init(jamband) ->
+  {ok, {{simple_one_for_one, 3, 60},
+        [{jam_musician,
+          {musicians, start_link, []},
+          temporary, 1000, worker, [musicians]}
+        ]}};
 init(lenient) ->
   init({one_for_one, 3, 60});
 init(angry) ->

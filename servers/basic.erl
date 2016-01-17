@@ -6,6 +6,7 @@
 
 %% behaviour implemenation
 init(Args=[StartupTime|_]) ->
+  process_flag(trap_exit, true),
   io:format("beginning with ~p~n", Args),
   receive
   after StartupTime ->
@@ -28,7 +29,7 @@ handle_info(Info, State) ->
   io:format("info: ~p~n", [Info]),
   {noreply, State}.
 terminate(Reason, State) ->
-  io:format("exit because ~p in ~p~n", [Reason, State]),
+  io:format("terminate because ~p in ~p~n", [Reason, State]),
   exit.
 
 %% helpers

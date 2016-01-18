@@ -29,6 +29,6 @@ start(basic, SupervisorRef) ->
                                          type => worker },
                                        #{id => charlie,
                                          start => {basic, start, [900]},
-                                         restart => transient,
+                                         restart => permanent, %% transient,
                                          shutdown => 3000,
                                          type => worker } ] }).

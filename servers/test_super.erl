@@ -28,6 +28,21 @@ run(exit_normal_does_not_terminate_children) ->
   io:format("Current children ~p~n", [supervisor_children_pids(test_one)]),
   exit(Supervisor, normal),
   passed;
+run(referencing_of_worker_by_id) ->
+  io:format("testing as ~p~n", [self()]),
+  {ok, Supervisor} = super:start(basic, ref_worker),
+  io:format("must all be started~n"),
+  receive
+    Msg -> io:format("got ~p something back~n", [Msg])
+  after 2000 -> io:format("waited too long~n")
+  end,
+  receive
+  after 2000 ->
+    % TODO: figure out why this call never arrives
+    gen_server:cast(alpha, boo)
+  end,
+  exit(Supervisor, normal),
+  passed;
 run(exit_kill_does_terminate_children) ->
   io:format("testing as ~p~n", [self()]),
   %% test killing all tasks multiple times and watch if they restart
@@ -87,3 +102,4 @@ run(exit_supervising_child) ->
   false = (supervisor_children_pids(tree) == Children),
   exit(Supervisor, normal),
   passed.
+% attempt to pickup a worker by its name or id

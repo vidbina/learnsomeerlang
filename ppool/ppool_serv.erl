@@ -24,7 +24,7 @@ handle_call({run, Args}, _From, S = #state{limit=N, sup=Sup, refs=R})
   when N > 0 ->
   {ok, Pid} = supervisor:start_child(Sup, Args),
   Ref = erlang:monitor(process, Pid),
-  {reply, {ok, Pid}, S=#state{limit=N-1, refs=gb_sets:add(Ref, R)}};
+  {reply, {ok, Pid}, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}};
 handle_call({run, _Args}, _From, S=#state{limit=N}) when N =< 0 ->
   {reply, noalloc, S};
 handle_call({sync, Args}, _From, S = #state{limit=N, sup=Sup, refs=R})
@@ -51,7 +51,7 @@ handle_cast(_Msg, State) ->
 handle_info({start_worker_supervisor, Sup, MFA}, S = #state{}) ->
   {ok, Pid} = supervisor:start_child(Sup, ?SPEC(MFA)),
   link(Pid),
-  {no_reply, S#state{sup=Pid}};
+  {noreply, S#state{sup=Pid}};
 handle_info({'DOWN', Ref, process, _Pid, S}, S=#state{refs=Refs}) ->
   io:format("down from ~p~n", [Ref]),
   case gb_sets:is_element(Ref, Refs) of
@@ -65,6 +65,7 @@ handle_info(Msg, State) ->
 handle_down_worker(Ref, S=#state{limit=L, sup=Sup, refs=Refs}) ->
   case queue:out(S#state.queue) of
     {{value, {From, Args}}, Q} ->
+      io:format("start new with args ~p from ~p~n", [Args, From]),
       {ok, Pid} = supervisor:start_child(Sup, Args),
       NewRef = erlang:monitor(process, Pid),
       % remove down Ref and add currently spawned Ref
@@ -72,6 +73,7 @@ handle_down_worker(Ref, S=#state{limit=L, sup=Sup, refs=Refs}) ->
       gen_server:reply(From, {ok, Pid}),
       {noreply, S#state{refs=NewRefs, queue=Q}};
     {{value, Args}, Q} ->
+      io:format("start new with args ~p~n", [Args]),
       {ok, Pid} = supervisor:start_child(Sup, Args),
       NewRef = erlang:monitor(process, Pid),
       NewRefs = gb_sets:insert(NewRef, gb_sets:delete(Ref, Refs)),

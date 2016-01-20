@@ -16,20 +16,27 @@ init(Args=[StartupTime|_]) ->
 code_change(OldVsn, State, Extra) ->
   io:format("code update from ~p in ~p with ~p~n", [OldVsn, State, Extra]),
   {ok, State}.
+handle_call({wait, Time}, From, State) ->
+  io:format("~p asked to wait ~p ms~n", [From, Time]),
+  receive
+  after Time -> wait
+  end,
+  io:format("after receive def~n"),
+  {reply, 42, State};
 handle_call(Request, From, State) ->
   io:format("~p asked ~p ~p in ~p~n", [From, self(), Request, State]),
   {reply, 42, State}.
 handle_cast(Request, State) ->
   io:format("~p cast in ~p ~p~n", [Request, self(), State]),
   case Request of
-    die -> {stop, dealing_with_asshole};
+    die -> {stop, normal, dealing_with_asshole};
     _ ->{noreply, State}
   end.
 handle_info(Info, State) ->
   io:format("info: ~p~n", [Info]),
   {noreply, State}.
 terminate(Reason, State) ->
-  io:format("terminate because ~p in ~p~n", [Reason, State]),
+  io:format("terminate because ~p in ~p flushing ~p~n", [Reason, State, c:flush()]),
   exit.
 
 %% helpers

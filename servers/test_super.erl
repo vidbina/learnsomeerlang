@@ -75,6 +75,22 @@ run(exit_other_does_not_terminate_children) ->
   true = (supervisor_children_pids(test_other) == Children),
   exit(Supervisor, normal),
   passed;
+% TODO: if the server is called by the supervisor and the supervisor receives
+% {'EXIT',_,_} tuples, will the supervisor pickup a timeout?
+run(pickup_timeout_of_child) ->
+  {ok, Supervisor} = super:start(childless, trap_timeouts),
+  {ok, Child} = supervisor:start_child(Supervisor, #{id => timer,
+                                       start => {basic, start, [50]},
+                                       restart => transient,
+                                       shutdown => 3000,
+                                       type => worker}),
+  gen_server:call(Child, {wait, 1000}, 400),
+  receive
+    Msg -> io:format("test received ~p~n", [Msg])
+  after 5000 ->
+          io:format("done")
+  end,
+  passed;
 run(exit_supervising_child) ->
   io:format("testing as ~p~n", [self()]),
   %% test killing all tasks multiple times and watch if they restart
@@ -102,4 +118,4 @@ run(exit_supervising_child) ->
   false = (supervisor_children_pids(tree) == Children),
   exit(Supervisor, normal),
   passed.
-% attempt to pickup a worker by its name or id
+% TODO: attempt to pickup a worker by its name or id

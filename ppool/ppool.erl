@@ -42,14 +42,19 @@ test(async_jobs) ->
   ppool:async_queue(nagger, ["shower", 7500, 1, self()]),
   ppool:async_queue(nagger, ["plant a tree", 11000, 1, self()]);
 test(a) ->
+  io:format("PID before: ~p~n", [self()]),
   test(setup),
   test(sync_jobs),
   test(async_jobs),
   receive
   after 25000 ->
-          io:format("terminate"),
-          ppool:stop()
+          io:format("termin8"),
+          try ppool:stop()
+          catch
+            Something -> io:format("Catch ~p~n", [Something])
+          end
   end,
+  io:format("PID after: ~p~n", [self()]),
   passed;
 test(b) ->
   test(setup),
@@ -58,6 +63,16 @@ test(b) ->
   receive
   after 25000 ->
           io:format("terminate"),
-          ppool:stop()
+          ok
+          %try ppool:stop()
+          %catch
+          %  Something -> io:format("Catch ~p~n", [Something])
+          %end
   end,
-  passed.
+  passed;
+test(run) ->
+  try test(a)
+  catch
+    Anything -> io:format("err: ~p~n", [Anything])
+  end,
+  io:format("done~n").

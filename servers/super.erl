@@ -9,6 +9,15 @@ init(Args=#{supervisor:=SupervisorStrategy, children:=ChildSpecs}) ->
   {ok, {SupervisorStrategy, ChildSpecs}}.
 
 %% helpers
+start(childless, SupervisorRef) ->
+  io:format("starting supervisor childless ~p~n", [SupervisorRef]),
+  supervisor:start_link({local, SupervisorRef},
+                        ?MODULE,
+                        #{supervisor => #{
+                            strategy => one_for_one,
+                            intensity => 3, %% allow 3 restarts
+                            period => 5000 },  %% within a 5000ms timeframe
+                          children => [] });
 start(basic, SupervisorRef) ->
   io:format("starting supervisor basic ~p~n", [SupervisorRef]),
   supervisor:start_link({local, SupervisorRef},

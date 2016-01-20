@@ -53,11 +53,11 @@ simple_gen_list_test_() ->
 % represents the bound variable names instead of the values which will make
 % debugging difficult.
 reverse_readable_gen_list_test_() ->
-  [?_test(?assert(Base =:= lists:reverse(Res))) || {Base, Res} <- [{[], []},
-                                                                   {[1], [1]},
-                                                                   {[2,1], [1,2]},
-                                                                   {[2,1], [2,2]},
-                                                                   {[2,1], [2,1]}]].
+  [{Descr, ?_test(?assert(Base =:= lists:reverse(Res)))} || {Base, Res, Descr} <- [{[], []},
+                                                                   {[1], [1], "single identity"},
+                                                                   {[2,1], [1,2], "2,1 to 1,2"},
+                                                                   {[2,1], [2,2], "2,1 to 2,2"},
+                                                                   {[2,1], [2,1], "2,1 to 2,1"}]].
 
 gen_test_() -> [?_test(?assert(A =:= B)) || {A, B} <- [{1,1.0}, {2,2}, {0.0, 0}]].
 

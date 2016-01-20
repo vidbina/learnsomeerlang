@@ -24,13 +24,16 @@ handle_call({run, Args}, _From, S = #state{limit=N, sup=Sup, refs=R})
   when N > 0 ->
   {ok, Pid} = supervisor:start_child(Sup, Args),
   Ref = erlang:monitor(process, Pid),
+  io:format("run~nS_pre  ~p~nS_post ~p~n", [S, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}]),
   {reply, {ok, Pid}, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}};
 handle_call({run, _Args}, _From, S=#state{limit=N}) when N =< 0 ->
+  io:format("noalloc~n"),
   {reply, noalloc, S};
 handle_call({sync, Args}, _From, S = #state{limit=N, sup=Sup, refs=R})
   when N > 0 ->
   {ok, Pid} = supervisor:start_link(Sup, Args),
   Ref = erlang:monitor(process, Pid),
+  io:format("sync~nS_pre  ~p~nS_post ~p~n", [S, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}]),
   {reply, {ok, Pid}, S#state{limit=N-1, refs=gb_sets:add(Ref, R)}};
 handle_call({sync, Args}, From, S = #state{queue=Q}) ->
   {noreply, S#state{queue=queue:in({From, Args}, Q)}};
@@ -42,6 +45,7 @@ handle_call(_Msg, _From, State) ->
 handle_cast({async, Args}, S=#state{limit=N, sup=Sup, refs=R}) when N > 0 ->
   {ok, Pid} = supervisor:start_child(Sup, Args),
   Ref = erlang:monitor(process, Pid),
+  io:format("async~nS_pre  ~p~nS_post ~p~n", [S, S#state{limit=N-1, refs=gb_sets:add(Ref,R)}]),
   {noreply, S#state{limit=N-1, refs=gb_sets:add(Ref,R)}};
 handle_cast({async, Args}, S=#state{limit=N, queue=Q}) when N =< 0 ->
   {noreply, S#state{queue=queue:in(Args, Q)}};

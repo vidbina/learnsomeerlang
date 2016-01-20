@@ -49,10 +49,11 @@ test(a) ->
   receive
   after 25000 ->
           io:format("termin8"),
-          try ppool:stop()
-          catch
-            Something -> io:format("Catch ~p~n", [Something])
-          end
+%          try ppool:stop()
+%          catch
+%            Something -> io:format("Catch ~p~n", [Something])
+%          end
+          ok
   end,
   io:format("PID after: ~p~n", [self()]),
   passed;
@@ -63,11 +64,7 @@ test(b) ->
   receive
   after 25000 ->
           io:format("terminate"),
-          ok
-          %try ppool:stop()
-          %catch
-          %  Something -> io:format("Catch ~p~n", [Something])
-          %end
+          ppool:stop()
   end,
   passed;
 test(run) ->
